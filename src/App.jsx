@@ -27,12 +27,10 @@ export default function App() {
 
     let lifeExpectancy = 72;
 
-    // Lifestyle
     if (input.smoker) lifeExpectancy -= 8;
     if (input.drinker) lifeExpectancy -= 3;
     if (input.exercise) lifeExpectancy += 4;
 
-    // BMI
     if (input.height && input.weight) {
       const h = input.height / 100;
       const bmi = input.weight / (h * h);
@@ -41,15 +39,12 @@ export default function App() {
       else if (bmi < 18.5) lifeExpectancy -= 2;
     }
 
-    // Sleep
     if (input.sleep < 6) lifeExpectancy -= 3;
     if (input.sleep >= 7 && input.sleep <= 8) lifeExpectancy += 2;
 
-    // Diet
     if (input.diet === "good") lifeExpectancy += 3;
     if (input.diet === "poor") lifeExpectancy -= 3;
 
-    // Stress
     if (input.stress === "high") lifeExpectancy -= 4;
     if (input.stress === "low") lifeExpectancy += 2;
 
@@ -87,17 +82,71 @@ export default function App() {
   const used = totalLife - baseSeconds;
   const percent = Math.min((used / totalLife) * 100, 100);
 
-  // Share
+  // ================= INSIGHTS =================
+  const insights = [];
+  let gain = 0;
+
+  if (input.smoker) {
+    insights.push("Smoking is significantly reducing your lifespan");
+    gain += 8;
+  }
+
+  if (input.sleep < 6) {
+    insights.push("Low sleep is harming your long-term health");
+    gain += 3;
+  }
+
+  if (input.stress === "high") {
+    insights.push("High stress is a major risk factor");
+    gain += 4;
+  }
+
+  if (input.exercise) {
+    insights.push("Exercise is improving your longevity");
+  }
+
+  if (input.diet === "good") {
+    insights.push("Healthy diet is adding years to your life");
+  }
+
+  if (input.height && input.weight) {
+    const hgt = input.height / 100;
+    const bmi = input.weight / (hgt * hgt);
+
+    if (bmi > 30) {
+      insights.push("High BMI may reduce your lifespan");
+      gain += 4;
+    } else if (bmi >= 18.5 && bmi <= 25) {
+      insights.push("Your BMI is in a healthy range");
+    }
+  }
+
+  let biggestRisk = "";
+  if (input.smoker) biggestRisk = "Smoking";
+  else if (input.stress === "high") biggestRisk = "High stress";
+  else if (input.sleep < 6) biggestRisk = "Low sleep";
+
+  // ================= SHARE =================
   const share = () => {
-    const text = `I have ${Math.floor(
-      seconds / 1e6
-    )} million seconds left. What about you?`;
+    const url = "https://life-clock-tau.vercel.app/";
+
+    const text = `I’ve used ${percent.toFixed(
+      1
+    )}% of my life.
+
+How much have YOU used?
+
+👇 Try it
+${url}`;
 
     if (navigator.share) {
-      navigator.share({ text });
+      navigator.share({
+        text,
+        url,
+      });
     } else {
       navigator.clipboard.writeText(text);
-      alert("Copied to clipboard!");
+      alert("Link copied! Share it 🚀");
     }
   };
 
@@ -111,7 +160,6 @@ export default function App() {
             Your Life Clock
           </h1>
 
-          {/* DOB */}
           <input
             type="date"
             className="w-full p-3 mb-4 bg-black border border-white/20 rounded"
@@ -120,7 +168,6 @@ export default function App() {
             }
           />
 
-          {/* Height & Weight */}
           <input
             type="number"
             placeholder="Height (cm)"
@@ -139,7 +186,6 @@ export default function App() {
             }
           />
 
-          {/* Sleep */}
           <label className="text-sm mb-1 block">
             Sleep: {input.sleep} hrs
           </label>
@@ -154,7 +200,6 @@ export default function App() {
             }
           />
 
-          {/* Diet */}
           <select
             className="w-full p-3 mb-4 bg-black border border-white/20 rounded"
             onChange={(e) =>
@@ -167,7 +212,6 @@ export default function App() {
             <option value="poor">Poor</option>
           </select>
 
-          {/* Stress */}
           <select
             className="w-full p-3 mb-4 bg-black border border-white/20 rounded"
             onChange={(e) =>
@@ -180,7 +224,6 @@ export default function App() {
             <option value="high">High</option>
           </select>
 
-          {/* Toggles */}
           <label className="flex justify-between mb-2">
             Smoking
             <input
@@ -224,17 +267,16 @@ export default function App() {
 
   // ================= RESULT PAGE =================
   return (
-    <div className="h-screen bg-black text-white flex flex-col items-center justify-center px-6">
+    <div className="h-screen bg-gradient-to-b from-black to-gray-900 text-white flex flex-col items-center justify-center px-6">
 
       <p className="text-xs tracking-[0.3em] opacity-50">
         YOUR LIFE CLOCK
       </p>
 
-      <h1 className="text-6xl md:text-7xl font-mono mt-6 text-center">
+      <h1 className="text-6xl md:text-7xl font-mono mt-6 text-center drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
         {d}d {h}h {m}m {sec}s
       </h1>
 
-      {/* Progress */}
       <div className="w-full max-w-xl mt-10">
         <div className="h-2 bg-white/10 rounded-full overflow-hidden">
           <div
@@ -248,12 +290,24 @@ export default function App() {
         </p>
       </div>
 
-      {/* Insight */}
-      <p className="mt-6 text-sm opacity-60 text-center">
-        Small changes in habits can add years to your life.
-      </p>
+      {biggestRisk && (
+        <p className="mt-6 text-sm text-red-400">
+          Biggest risk: {biggestRisk}
+        </p>
+      )}
 
-      {/* Buttons */}
+      {gain > 0 && (
+        <p className="mt-2 text-sm text-green-400">
+          You could gain ~{gain} years by improving habits
+        </p>
+      )}
+
+      <div className="mt-6 text-sm opacity-70 text-center max-w-md">
+        {insights.map((item, i) => (
+          <p key={i}>• {item}</p>
+        ))}
+      </div>
+
       <div className="flex gap-4 mt-8">
         <button
           onClick={() => setPage("input")}
@@ -270,8 +324,8 @@ export default function App() {
         </button>
       </div>
 
-      <p className="mt-10 text-sm opacity-50 italic">
-        “Make it count.”
+      <p className="mt-10 text-xs opacity-40">
+        This is a fun estimation, not medical advice.
       </p>
     </div>
   );
