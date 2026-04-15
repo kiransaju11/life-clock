@@ -130,9 +130,7 @@ export default function App() {
   const share = () => {
     const url = "https://life-clock-tau.vercel.app/";
 
-    const text = `I’ve used ${percent.toFixed(
-      1
-    )}% of my life.
+    const text = `I’ve used ${percent.toFixed(1)}% of my life.
 
 How much have YOU used?
 
@@ -140,9 +138,7 @@ How much have YOU used?
 ${url}`;
 
     if (navigator.share) {
-      navigator.share({
-        text,
-      });
+      navigator.share({ text });
     } else {
       navigator.clipboard.writeText(text);
       alert("Link copied! Share it 🚀");
@@ -159,14 +155,22 @@ ${url}`;
             Your Life Clock
           </h1>
 
+          {/* DOB */}
+          <label className="text-sm mb-1 block opacity-70">
+            {input.dob
+              ? `DOB: ${input.dob}`
+              : "Select your Date of Birth"}
+          </label>
+
           <input
             type="date"
-            className="w-full p-3 mb-4 bg-black border border-white/20 rounded"
+            className="w-full p-3 mb-4 bg-black border border-white/20 rounded text-white focus:outline-none focus:ring-2 focus:ring-white/30"
             onChange={(e) =>
               setInput({ ...input, dob: e.target.value })
             }
           />
 
+          {/* Height & Weight */}
           <input
             type="number"
             placeholder="Height (cm)"
@@ -185,6 +189,7 @@ ${url}`;
             }
           />
 
+          {/* Sleep */}
           <label className="text-sm mb-1 block">
             Sleep: {input.sleep} hrs
           </label>
@@ -199,6 +204,7 @@ ${url}`;
             }
           />
 
+          {/* Diet */}
           <select
             className="w-full p-3 mb-4 bg-black border border-white/20 rounded"
             onChange={(e) =>
@@ -211,6 +217,7 @@ ${url}`;
             <option value="poor">Poor</option>
           </select>
 
+          {/* Stress */}
           <select
             className="w-full p-3 mb-4 bg-black border border-white/20 rounded"
             onChange={(e) =>
@@ -223,6 +230,7 @@ ${url}`;
             <option value="high">High</option>
           </select>
 
+          {/* Toggles */}
           <label className="flex justify-between mb-2">
             Smoking
             <input
