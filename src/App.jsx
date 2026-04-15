@@ -126,6 +126,22 @@ export default function App() {
   else if (input.stress === "high") biggestRisk = "High stress";
   else if (input.sleep < 6) biggestRisk = "Low sleep";
 
+
+  <div className="mt-8">
+    <ins
+      className="adsbygoogle"
+      style={{ display: "block" }}
+      data-ad-client="YOUR_CLIENT_ID"
+      data-ad-slot="YOUR_AD_SLOT"
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    ></ins>
+  </div>
+
+  {typeof window !== "undefined" &&
+  (window.adsbygoogle = window.adsbygoogle || []).push({})}
+
+  
   // ================= SHARE =================
   const share = () => {
     const url = "https://life-clock-tau.vercel.app/";
