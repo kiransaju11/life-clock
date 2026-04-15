@@ -142,7 +142,6 @@ ${url}`;
     if (navigator.share) {
       navigator.share({
         text,
-        url,
       });
     } else {
       navigator.clipboard.writeText(text);
